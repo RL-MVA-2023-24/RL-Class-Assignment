@@ -70,6 +70,6 @@ Your task is to write, train, and save an RL agent which interacts with the defa
 
 ### Grading
 
-The final grade, out of ten points, is made of two parts.  
+The final grade, out of nine points, is made of two parts.  
 First, your agent will be evaluated on the default patient. There are six score thresholds: every time your agent passes a threshold, you gain one point.  
-Then, your agent will be evaluated on the population of patients. There are four score thresholds: every time your agent passes a threshold, you gain one point.  
+Then, your agent will be evaluated on the population of patients. There are three score thresholds: every time your agent passes a threshold, you gain another point.  
