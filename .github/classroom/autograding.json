@@ -1,0 +1,94 @@
+{
+  "tests": [
+    {
+      "name": "Agent performance 1",
+      "setup": "sudo -H pip install -r  requirements.txt ",
+      "run": "python src/main.py && python  -m pytest src/grading.py::test_expected_result_one_env_3432807",
+      "input": "",
+      "output": "",
+      "comparison": "exact",
+      "timeout": 60,
+      "points": 1
+    },
+    {
+      "name": "Agent dr performance 3",
+      "setup": "sudo -H pip install -r  requirements.txt ",
+      "run": "python src/main.py && python  -m pytest src/grading.py::test_expected_result_dr_env_5e10",
+      "input": "",
+      "output": "",
+      "comparison": "exact",
+      "timeout": 60,
+      "points": 1
+    },
+    {
+      "name": "Agent performance 3",
+      "setup": "sudo -H pip install -r  requirements.txt ",
+      "run": "python src/main.py && python  -m pytest src/grading.py::test_expected_result_one_env_1e9",
+      "input": "",
+      "output": "",
+      "comparison": "exact",
+      "timeout": 60,
+      "points": 1
+    },
+    {
+      "name": "Agent performance 4",
+      "setup": "sudo -H pip install -r  requirements.txt ",
+      "run": "python src/main.py && python  -m pytest src/grading.py::test_expected_result_one_env_1e10",
+      "input": "",
+      "output": "",
+      "comparison": "exact",
+      "timeout": 60,
+      "points": 1
+    },
+    {
+      "name": "Agent performance 5",
+      "setup": "sudo -H pip install -r  requirements.txt ",
+      "run": "python src/main.py && python  -m pytest src/grading.py::test_expected_result_one_env_2e10",
+      "input": "",
+      "output": "",
+      "comparison": "exact",
+      "timeout": 60,
+      "points": 1
+    },
+    {
+      "name": "Agent performance 6",
+      "setup": "sudo -H pip install -r  requirements.txt ",
+      "run": "python src/main.py && python  -m pytest src/grading.py::test_expected_result_one_env_5e10",
+      "input": "",
+      "output": "",
+      "comparison": "exact",
+      "timeout": 60,
+      "points": 1
+    },
+    {
+      "name": "Agent dr performance 1",
+      "setup": "sudo -H pip install -r  requirements.txt ",
+      "run": "python src/main.py && python  -m pytest src/grading.py::test_expected_result_dr_env_1e10",
+      "input": "",
+      "output": "",
+      "comparison": "exact",
+      "timeout": 60,
+      "points": 1
+    },
+    {
+      "name": "Agent dr performance 2",
+      "setup": "sudo -H pip install -r  requirements.txt ",
+      "run": "python src/main.py && python  -m pytest src/grading.py::test_expected_result_dr_env_2e10",
+      "input": "",
+      "output": "",
+      "comparison": "exact",
+      "timeout": 60,
+      "points": 1
+    },
+    {
+      "name": "Agent performance 2",
+      "setup": "sudo -H pip install -r  requirements.txt ",
+      "run": "python src/main.py && python  -m pytest src/grading.py::test_expected_result_one_env_1e8",
+      "input": "",
+      "output": "",
+      "comparison": "exact",
+      "timeout": 60,
+      "points": 1
+    }
+  ]
+}
