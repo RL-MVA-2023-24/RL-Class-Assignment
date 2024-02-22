@@ -82,6 +82,6 @@ class ProjectAgent:
         pickle.dump(payload, open(path, "wb"))
 
     def load(self):
-        payload = pickle.load(open("randomForestRegression.pkl", "rb"))
+        payload = pickle.load(open("src/randomForestRegression.pkl", "rb"))
         self.Qfunction = payload["Qfunction"]
         self.nb_actions = payload["nb_actions"]
