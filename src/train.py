@@ -51,7 +51,7 @@ class ProjectAgent:
         Qsa = []
         for a in range(self.nb_actions):
             sa = np.append(observation,a).reshape(1, -1)
-            Qsa.append(Q.predict(sa))
+            Qsa.append(self.Qfunction.predict(sa))
         return np.argmax(Qsa)
     
     def train(self, env, horizon=1000, iterations=1000, disable_tqdm=False, gamma=0.9):
