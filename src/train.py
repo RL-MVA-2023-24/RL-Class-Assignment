@@ -1,5 +1,4 @@
 from copy import deepcopy
-from matplotlib import pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
 from gymnasium.wrappers import TimeLimit
 from env_hiv import HIVPatient
