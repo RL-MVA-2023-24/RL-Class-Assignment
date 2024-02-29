@@ -311,10 +311,12 @@ class dqn_agent:
 
 
 state_dim = env.observation_space.shape[0]
-print(state_dim)
+# print(state_dim)
 n_action = env.action_space.n 
+# print(n_action)
 nb_neurons=124
 device = "cuda" if torch.cuda.is_available() else "cpu"
+device = "cpu"
 DQN = torch.nn.Sequential(nn.Linear(state_dim, nb_neurons),
                           nn.ReLU(),
                           nn.Linear(nb_neurons, nb_neurons),
@@ -400,9 +402,11 @@ class ProjectAgent:
             self.Qfunction = Q
         return self.Qfunction
     def load(self):
-        payload = pickle.load(open("src/dqn.pkl", "rb"))
-        self.model = payload["target_model"]
-        self.nb_actions = payload["nb_actions"]
+        model_dict = torch.load("src/dqn.pth", map_location=torch.device('cpu'))
+        model = DQN
+        model.load_state_dict(model_dict)
+        self.model = model
+        self.nb_actions = 4
 # payload = pickle.load(open("src/dqn.pkl", "rb"))
 # model = payload["target_model"]
 # torch.save(model.state_dict(), "src/dqn.pth")
