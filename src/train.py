@@ -313,9 +313,9 @@ state_dim = env.observation_space.shape[0]
 # print(state_dim)
 n_action = env.action_space.n 
 # print(n_action)
-nb_neurons=124
+nb_neurons=256
 device = "cuda" if torch.cuda.is_available() else "cpu"
-device = "cpu"
+# device = "cpu"
 DQN = torch.nn.Sequential(nn.Linear(state_dim, nb_neurons),
                           nn.ReLU(),
                           nn.Linear(nb_neurons, nb_neurons),
@@ -406,6 +406,46 @@ class ProjectAgent:
         model.load_state_dict(model_dict)
         self.model = model
         self.nb_actions = 4
-# payload = pickle.load(open("src/dqn.pkl", "rb"))
-# model = payload["target_model"]
-# torch.save(model.state_dict(), "src/dqn.pth")
+
+if __name__ == "__main__":
+    # training
+    # # DQN config
+    config = {'nb_actions': n_action,
+            'learning_rate': 0.001,
+            'gamma': 0.95,
+            'buffer_size': int(1e5),
+            'epsilon_min': 0.01,
+            'epsilon_max': 1.,
+            'epsilon_decay_period': 200*15,
+            'epsilon_delay_decay': 200*5,
+            'batch_size': 40,
+            'gradient_steps': 1,
+            'update_target_strategy': 'replace', # or 'ema'
+            'update_target_freq': 50,
+            'update_target_tau': 0.005,
+            'criterion': torch.nn.SmoothL1Loss(),
+            'monitoring_nb_trials': 3}
+    config = {'nb_actions': n_action,
+                'learning_rate': 1e-4,
+                'gamma': 0.95,
+                'buffer_size': 1000000,
+                'epsilon_min': 0.01,
+                'epsilon_max': 1,
+                'epsilon_decay_period': 200*15,
+                'epsilon_delay_decay': 200*5,
+                'batch_size': 2048,
+                'gradient_steps': 20,
+                'update_target_strategy': 'ema', # or 'ema'
+                'update_target_freq': 50,
+                'update_target_tau': 0.0005,
+                'criterion': torch.nn.SmoothL1Loss(),
+                'monitoring_nb_trials': 3}
+
+    # Train agent
+    agent = dqn_agent(config, DQN)
+    ep_length, disc_rewards, tot_rewards, V0 = agent.train(env, 200)
+    agent.save("src/dqn.pkl")
+    payload = pickle.load(open("src/dqn.pkl", "rb"))
+    model = payload["target_model"]
+    torch.save(model.state_dict(), "src/dqn.pth")
+    
