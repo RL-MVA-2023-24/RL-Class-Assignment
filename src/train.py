@@ -246,7 +246,7 @@ class dqn_agent:
         while episode < max_episode:
             # update epsilon
             if step > self.epsilon_delay:
-                epsilon = max(self.epsilon_min, epsilon-self.epsilon_step)
+                epsilon = 0.1
             # select epsilon-greedy action
             if np.random.rand() < epsilon:
                 action = env.action_space.sample()
@@ -313,7 +313,7 @@ state_dim = env.observation_space.shape[0]
 # print(state_dim)
 n_action = env.action_space.n 
 # print(n_action)
-nb_neurons=256
+nb_neurons=124
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # device = "cpu"
 DQN = torch.nn.Sequential(nn.Linear(state_dim, nb_neurons),
@@ -428,13 +428,13 @@ if __name__ == "__main__":
     config = {'nb_actions': n_action,
                 'learning_rate': 1e-4,
                 'gamma': 0.95,
-                'buffer_size': 1000000,
+                'buffer_size': 1024*10,
                 'epsilon_min': 0.01,
                 'epsilon_max': 1,
                 'epsilon_decay_period': 200*15,
                 'epsilon_delay_decay': 200*5,
-                'batch_size': 2048,
-                'gradient_steps': 20,
+                'batch_size': 1024,
+                'gradient_steps': 10,
                 'update_target_strategy': 'ema', # or 'ema'
                 'update_target_freq': 50,
                 'update_target_tau': 0.0005,
