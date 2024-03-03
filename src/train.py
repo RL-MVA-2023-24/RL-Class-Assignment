@@ -404,14 +404,14 @@ class ProjectAgent:
             self.Qfunction = Q
         return self.Qfunction
     def load(self):
-        # model_dict = torch.load("src/dqn.pth", map_location=torch.device('cpu'))
-        # model = DQN
-        # model.load_state_dict(model_dict)
-        # self.model = model
-        # self.nb_actions = 4
-        payload = pickle.load(open("src/dqn.pkl", "rb"))
-        self.model = payload["model"]
-        self.nb_actions = payload["nb_actions"]
+        model_dict = torch.load("src/dqn.pth", map_location=torch.device('cpu'))
+        model = DQN
+        model.load_state_dict(model_dict)
+        self.model = model
+        self.nb_actions = 4
+        # payload = pickle.load(open("src/dqn.pkl", "rb"))
+        # self.model = payload["model"]
+        # self.nb_actions = payload["nb_actions"]
 
 if __name__ == "__main__":
     # training
@@ -434,13 +434,13 @@ if __name__ == "__main__":
     config = {'nb_actions': n_action,
                 'learning_rate': 5e-4,
                 'gamma': 0.95,
-                'buffer_size': 2048*20,
+                'buffer_size': 2048*40,
                 'epsilon_min': 0.05,
                 'epsilon_max': 1,
                 'epsilon_decay_period': 200*50,
                 'epsilon_delay_decay': 200*10,
                 'batch_size': 2048,
-                'gradient_steps': 20,
+                'gradient_steps': 40,
                 'update_target_strategy': 'ema', # or 'ema'
                 'update_target_freq': 20,
                 'update_target_tau': 0.005,
@@ -449,7 +449,7 @@ if __name__ == "__main__":
 
     # Train agent
     agent = dqn_agent(config, DQN)
-    ep_length, disc_rewards, tot_rewards, V0 = agent.train(env, 501)
+    ep_length, disc_rewards, tot_rewards, V0 = agent.train(env, 1000)
     agent.save("src/dqn.pkl")
     payload = pickle.load(open("src/dqn.pkl", "rb"))
     model = payload["target_model"]
