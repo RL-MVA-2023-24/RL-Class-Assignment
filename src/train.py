@@ -96,14 +96,14 @@ class a2c_agent:
             episode_cum_reward = 0
             while(True):
                 a, log_prob, entropy = self.sample_action(x)
-                y,r,d,_,_ = env.step(a)
+                y,r,d,t,_ = env.step(a)
                 values.append(self.value(torch.as_tensor(x)).squeeze(dim=0))
                 log_probs.append(log_prob)
                 entropies.append(entropy)
                 rewards.append(r)
                 episode_cum_reward += r
                 x=y
-                if d:
+                if d or t:
                     # compute returns-to-go
                     new_returns = []
                     G_t = self.value(torch.as_tensor(x)).squeeze(dim=0)
@@ -178,14 +178,14 @@ class ProjectAgent:
             episode_cum_reward = 0
             while(True):
                 a, log_prob, entropy = self.sample_action(x)
-                y,r,d,_,_ = env.step(a)
+                y,r,d,t,_ = env.step(a)
                 values.append(self.value(torch.as_tensor(x)).squeeze(dim=0))
                 log_probs.append(log_prob)
                 entropies.append(entropy)
                 rewards.append(r)
                 episode_cum_reward += r
                 x=y
-                if d:
+                if d or t:
                     # compute returns-to-go
                     new_returns = []
                     G_t = self.value(torch.as_tensor(x)).squeeze(dim=0)
@@ -220,27 +220,20 @@ class ProjectAgent:
     
     def act(self, observation, use_random=False):
         x,_,_ = self.sample_action(observation)
-        return x
+        return x.item()
 
     def save(self, path):
         torch.save(self.policy.state_dict(), path + '/policy_weights.pth')
         torch.save(self.value.state_dict(),  path +'/value_weights.pth')
-        pass
+        print(f'Model saved at {path}')
 
     def load(self):
-        pi = policyNetwork()  # Instantiate the model with the same architecture
-        pi.load_state_dict(torch.load('policy_weights.pth', map_location=torch.device('cpu')))
-        self.policy = pi 
-        V = policyNetwork()  # Instantiate the model with the same architecture
-        pi.load_state_dict(torch.load('policy_weights.pth',  map_location=torch.device('cpu')))
-        self.policy = pi 
-        pass
+        self.policy.load_state_dict(torch.load('policy_weights.pth', map_location=torch.device('cpu')))
+        self.policy.eval()
+        self.value.load_state_dict(torch.load('value_weights.pth',  map_location=torch.device('cpu')))
+        self.value.eval()
+        
 
-
-config = {'gamma':0.99,
-          'learning_rate':0.01,
-          'nb_episodes':10,
-          'entropy_coefficient': 1e-3}
 
 # pi = policyNetwork(env).to(device)
 # V  = valueNetwork(env).to(device)
