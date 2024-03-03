@@ -314,11 +314,13 @@ state_dim = env.observation_space.shape[0]
 # print(state_dim)
 n_action = env.action_space.n 
 # print(n_action)
-nb_neurons=64
+nb_neurons=124
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # device = "cpu"
 DQN = torch.nn.Sequential(nn.Linear(state_dim, nb_neurons),
                           nn.ReLU(),
+                          nn.Linear(nb_neurons, nb_neurons),
+                          nn.ReLU(), 
                           nn.Linear(nb_neurons, nb_neurons),
                           nn.ReLU(), 
                           nn.Linear(nb_neurons, n_action)).to(device)
@@ -402,11 +404,14 @@ class ProjectAgent:
             self.Qfunction = Q
         return self.Qfunction
     def load(self):
-        model_dict = torch.load("src/dqn.pth", map_location=torch.device('cpu'))
-        model = DQN
-        model.load_state_dict(model_dict)
-        self.model = model
-        self.nb_actions = 4
+        # model_dict = torch.load("src/dqn.pth", map_location=torch.device('cpu'))
+        # model = DQN
+        # model.load_state_dict(model_dict)
+        # self.model = model
+        # self.nb_actions = 4
+        payload = pickle.load(open("src/dqn.pkl", "rb"))
+        self.model = payload["model"]
+        self.nb_actions = payload["nb_actions"]
 
 if __name__ == "__main__":
     # training
@@ -427,24 +432,24 @@ if __name__ == "__main__":
             'criterion': torch.nn.SmoothL1Loss(),
             'monitoring_nb_trials': 3}
     config = {'nb_actions': n_action,
-                'learning_rate': 1e-3,
+                'learning_rate': 5e-4,
                 'gamma': 0.95,
-                'buffer_size': 2048*10,
+                'buffer_size': 2048*20,
                 'epsilon_min': 0.05,
                 'epsilon_max': 1,
-                'epsilon_decay_period': 200*30,
-                'epsilon_delay_decay': 200*5,
+                'epsilon_decay_period': 200*50,
+                'epsilon_delay_decay': 200*10,
                 'batch_size': 2048,
                 'gradient_steps': 20,
                 'update_target_strategy': 'ema', # or 'ema'
-                'update_target_freq': 10,
-                'update_target_tau': 0.0005,
+                'update_target_freq': 20,
+                'update_target_tau': 0.005,
                 'criterion': torch.nn.SmoothL1Loss(),
                 'monitoring_nb_trials': 0}
 
     # Train agent
     agent = dqn_agent(config, DQN)
-    ep_length, disc_rewards, tot_rewards, V0 = agent.train(env, 200)
+    ep_length, disc_rewards, tot_rewards, V0 = agent.train(env, 501)
     agent.save("src/dqn.pkl")
     payload = pickle.load(open("src/dqn.pkl", "rb"))
     model = payload["target_model"]
