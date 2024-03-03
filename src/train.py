@@ -220,7 +220,7 @@ class ProjectAgent:
     
     def act(self, observation, use_random=False):
         x,_,_ = self.sample_action(observation)
-        return x.item()
+        return x
 
     def save(self, path):
         torch.save(self.policy.state_dict(), path + '/policy_weights.pth')
