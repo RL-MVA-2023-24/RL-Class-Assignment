@@ -230,11 +230,11 @@ class ProjectAgent:
         torch.save(self.model.state_dict(), path)
 
     def load(self):
-        self.model.load_state_dict(torch.load('src/best_new_dqn_weights_159.pth', map_location=torch.device('cpu')))
+        self.model.load_state_dict(torch.load('src/best_dqn_weights_169.pth', map_location=torch.device('cpu')))
         self.target_model = deepcopy(self.model).to(device)
 
 
 if __name__ == "__main__":
     agent = ProjectAgent()
     agent.train(env,300)
-    agent.save('saved_weights')
+    agent.save('saved_weights.pth')
