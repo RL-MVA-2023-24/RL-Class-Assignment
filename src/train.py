@@ -210,7 +210,7 @@ class ProjectAgent:
 
     def train(self, env, nb_rollouts):
         avg_sum_rewards = []
-        for ep in trange(nb_rollouts):
+        for ep in range(nb_rollouts):
             avg_sum_rewards.append(self.one_gradient_step(env))
         return avg_sum_rewards
     
