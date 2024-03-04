@@ -224,15 +224,15 @@ class ProjectAgent:
         torch.save(self.policy.state_dict(), 'policy_'+ path)
         torch.save(self.value.state_dict(),'value_'+ path)
         print(f'Model saved under {path}')
-        pass
-        torch.save(self.policy.state_dict(), path + '/policy_weights.pth')
-        torch.save(self.value.state_dict(),  path +'/value_weights.pth')
-        print(f'Model saved at {path}')
+        # pass
+        # torch.save(self.policy.state_dict(), path + '/policy_weights.pth')
+        # torch.save(self.value.state_dict(),  path +'/value_weights.pth')
+        # print(f'Model saved at {path}')
 
     def load(self):
-        self.policy.load_state_dict(torch.load('policy_weights.pth', map_location=torch.device('cpu')))
+        self.policy.load_state_dict(torch.load('/src/policy_weights.pth', map_location=torch.device('cpu')))
         self.policy.eval()
-        self.value.load_state_dict(torch.load('value_weights.pth',  map_location=torch.device('cpu')))
+        self.value.load_state_dict(torch.load('/src/value_weights.pth',  map_location=torch.device('cpu')))
         self.value.eval()
         
 
