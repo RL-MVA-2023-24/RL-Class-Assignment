@@ -3,7 +3,6 @@ from torch import nn
 from gymnasium.wrappers import TimeLimit
 from env_hiv import HIVPatient
 import numpy as np
-from tqdm import tqdm
 import torch
 import random
 import os
@@ -48,7 +47,7 @@ def collect_samples(env, horizon, disable_tqdm=False, print_done_states=False):
     R = []
     S2 = []
     D = []
-    for _ in tqdm(range(horizon), disable=disable_tqdm):
+    for _ in range(horizon):
         a = env.action_space.sample()
         s2, r, done, trunc, _ = env.step(a)
         #dataset.append((s,a,r,s2,done,trunc))
