@@ -230,9 +230,9 @@ class ProjectAgent:
         # print(f'Model saved at {path}')
 
     def load(self):
-        self.policy.load_state_dict(torch.load('/src/policy_weights.pth', map_location=torch.device('cpu')))
+        self.policy.load_state_dict(torch.load('src/policy_weights.pth', map_location=torch.device('cpu')))
         self.policy.eval()
-        self.value.load_state_dict(torch.load('/src/value_weights.pth',  map_location=torch.device('cpu')))
+        self.value.load_state_dict(torch.load('src/value_weights.pth',  map_location=torch.device('cpu')))
         self.value.eval()
         
 
