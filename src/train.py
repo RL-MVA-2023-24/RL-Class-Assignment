@@ -266,7 +266,29 @@ from copy import deepcopy
 
 class ProjectAgent:
 
-    def __init__(self, config, model):
+    def __init__(self):
+        nb_neurons = 512
+        model = torch.nn.Sequential(nn.Linear(state_dim, nb_neurons),
+                          nn.ReLU(),
+                          nn.Linear(nb_neurons, nb_neurons),
+                          nn.ReLU(), 
+                          nn.Linear(nb_neurons, nb_neurons),
+                          nn.ReLU(), 
+                          nn.Linear(nb_neurons, n_action)).to(device)
+        config = {'nb_actions': env.action_space.n,
+          'learning_rate': 1e-2,
+          'gamma': 0.999,
+          'buffer_size': 100_000,
+          'epsilon_min': 0.01,
+          'epsilon_max': 1.,
+          'epsilon_decay_period': 20_000,
+          'epsilon_delay_decay': 500,
+          'batch_size': 200,
+          'gradient_steps': 2,
+          'update_target_strategy': 'replace', # or 'ema'
+          'update_target_freq': 500,
+          'update_target_tau': 0.005,
+          'criterion': torch.nn.SmoothL1Loss()}
         device = "cuda" if next(model.parameters()).is_cuda else "cpu"
         self.nb_actions = config['nb_actions']
         self.gamma = config['gamma'] if 'gamma' in config.keys() else 0.95
@@ -359,7 +381,7 @@ class ProjectAgent:
         return action
 
     def save(self, path):
-        pass
+        torch.save(self.model.state_dict(), path)
 
     def load(self):
         self.model.load_state_dict(torch.load('src/true_dqn_weights.pth', map_location=torch.device('cpu')))
