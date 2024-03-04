@@ -216,8 +216,8 @@ class ProjectAgent:
     
     def act(self, observation, use_random=False):
         x,_,_ = self.sample_action(observation)
-        print(f'obsvervation:{observation}')
-        print(f'act:{x}')
+        # print(f'obsvervation:{observation}')
+        # print(f'act:{x}')
         return x
 
     def save(self, path):
