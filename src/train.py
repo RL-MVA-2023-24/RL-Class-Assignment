@@ -330,6 +330,7 @@ class ProjectAgent:
         state, _ = env.reset()
         epsilon = self.epsilon_max
         step = 0
+        best_rew = 0
         while episode < max_episode:
             # update epsilon
             if step > self.epsilon_delay:
@@ -363,6 +364,10 @@ class ProjectAgent:
                 episode += 1
                 if (episode + 1) % 100 == 0:
                   torch.save(self.model.state_dict(), f'true_dqn_weights_{episode + 1}.pth')
+                if episode_cum_reward > best_rew:
+                  best_rew = episode_cum_reward
+                  torch.save(self.model.state_dict(), f'best_dqn_weights_{episode + 1}.pth')
+
                 print("Episode ", '{:3d}'.format(episode), 
                       ", epsilon ", '{:6.2f}'.format(epsilon), 
                       ", batch size ", '{:5d}'.format(len(self.memory)), 
@@ -386,7 +391,7 @@ class ProjectAgent:
         torch.save(self.model.state_dict(), path)
 
     def load(self):
-        self.model.load_state_dict(torch.load('src/true_dqn_weights_100.pth', map_location=torch.device('cpu')))
+        self.model.load_state_dict(torch.load('src/best_dqn_weights_169.pth', map_location=torch.device('cpu')))
         self.target_model = deepcopy(self.model).to(device)
 
 # pi = policyNetwork(env).to(device)
