@@ -17,25 +17,20 @@ import torch.nn.functional as F
 from torch.distributions import Categorical
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.distributions import Categorical
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+import numpy as np
 
 class policyNetwork(nn.Module):
     def __init__(self):
         super().__init__()
-        self.fc1 = nn.Linear(state_dim, 128, dtype = torch.float64)
-        self.fc2 = nn.Linear(128, n_action, dtype = torch.float64)
+        self.fc1 = nn.Linear(state_dim, 32, dtype = torch.float64)
+        self.fc3 = nn.Linear(32, n_action, dtype = torch.float64)
 
     def forward(self, x):
         if x.dim() == 1:
             x = x.unsqueeze(dim=0)
         x = F.relu(self.fc1(x))
-        action_scores = self.fc2(x)
+        action_scores = self.fc3(x)
         return F.softmax(action_scores,dim=1)
 
     def sample_action(self, x):
@@ -47,21 +42,19 @@ class policyNetwork(nn.Module):
         probabilities = self.forward(x)
         action_distribution = Categorical(probabilities)
         return action_distribution.log_prob(a)
-    
-from tqdm import trange
-import numpy as np
+
 
 class valueNetwork(nn.Module):
     def __init__(self):
         super().__init__()
-        self.fc1 = nn.Linear(state_dim, 128, dtype = torch.float64)
-        self.fc2 = nn.Linear(128, 1, dtype = torch.float64)
+        self.fc1 = nn.Linear(state_dim, 32, dtype = torch.float64)
+        self.fc3 = nn.Linear(32, 1, dtype = torch.float64)
 
     def forward(self, x):
         if x.dim() == 1:
             x = x.unsqueeze(dim=0)
         x = F.relu(self.fc1(x))
-        return self.fc2(x)
+        return self.fc3(x)
     
 class a2c_agent:
     def __init__(self, config, policy_network, value_network):
@@ -132,7 +125,7 @@ class a2c_agent:
 
     def train(self, env, nb_rollouts):
         avg_sum_rewards = []
-        for ep in trange(nb_rollouts):
+        for ep in range(nb_rollouts):
             avg_sum_rewards.append(self.one_gradient_step(env))
         return avg_sum_rewards
 
@@ -142,15 +135,15 @@ class ProjectAgent:
 
     def __init__(self):
         config = {'gamma':0.99,
-          'learning_rate':0.01,
+          'learning_rate':0.1,
           'nb_episodes':10,
           'entropy_coefficient': 1e-3}
-        policy_network = policyNetwork()
-        value_network = valueNetwork()
-        self.device = "cuda" if next(policy_network.parameters()).is_cuda else "cpu"
-        self.scalar_dtype = next(policy_network.parameters()).dtype
-        self.policy = policy_network
-        self.value = value_network
+        
+        self.policy = policyNetwork()
+        self.value = valueNetwork()
+        self.device = "cuda" if next(self.policy.parameters()).is_cuda else "cpu"
+        self.scalar_dtype = next(self.policy.parameters()).dtype
+
         self.gamma = config['gamma'] if 'gamma' in config.keys() else 0.99
         lr = config['learning_rate'] if 'learning_rate' in config.keys() else 0.001
         self.optimizer = torch.optim.Adam(list(self.policy.parameters()) + list(self.value.parameters()),lr=lr)
@@ -178,6 +171,7 @@ class ProjectAgent:
             episode_cum_reward = 0
             while(True):
                 a, log_prob, entropy = self.sample_action(x)
+                # print( f'action = {a}')
                 y,r,d,t,_ = env.step(a)
                 values.append(self.value(torch.as_tensor(x)).squeeze(dim=0))
                 log_probs.append(log_prob)
@@ -210,7 +204,9 @@ class ProjectAgent:
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
-        return np.mean(episodes_sum_of_rewards)
+        mean_sum_of_rewards = np.mean(episodes_sum_of_rewards)
+        print('rewards:',mean_sum_of_rewards)
+        return mean_sum_of_rewards
 
     def train(self, env, nb_rollouts):
         avg_sum_rewards = []
@@ -220,9 +216,15 @@ class ProjectAgent:
     
     def act(self, observation, use_random=False):
         x,_,_ = self.sample_action(observation)
+        print(f'obsvervation:{observation}')
+        print(f'act:{x}')
         return x
 
     def save(self, path):
+        torch.save(self.policy.state_dict(), 'policy_'+ path)
+        torch.save(self.value.state_dict(),'value_'+ path)
+        print(f'Model saved under {path}')
+        pass
         torch.save(self.policy.state_dict(), path + '/policy_weights.pth')
         torch.save(self.value.state_dict(),  path +'/value_weights.pth')
         print(f'Model saved at {path}')
@@ -247,3 +249,30 @@ class ProjectAgent:
 # score_agent_dr: float = evaluate_HIV_population(agent=agent, nb_episode=15)
 # with open(file="score.txt", mode="w") as f:
 #     f.write(f"{score_agent}\n{score_agent_dr}")
+agent = ProjectAgent()
+agent.train(env,50)
+agent.save('weight2.pth')
+
+from evaluate import evaluate_HIV, evaluate_HIV_population
+import random
+import os
+
+
+def seed_everything(seed: int = 42):
+    random.seed(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    torch.cuda.manual_seed_all(seed)
+
+
+# Initialization of the agent. Replace DummyAgent with your custom agent implementation.
+seed_everything(seed=42)
+# Keep the following lines to evaluate your agent unchanged.
+score_agent: float = evaluate_HIV(agent=agent, nb_episode=1)
+score_agent_dr: float = evaluate_HIV_population(agent=agent, nb_episode=15)
+with open(file="score2.txt", mode="w") as f:
+    f.write(f"{score_agent}\n{score_agent_dr}")
