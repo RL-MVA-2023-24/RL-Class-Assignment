@@ -221,7 +221,7 @@ class ProjectAgent:
             # print(f'act:{x}')
             return x
 
-        probabilities = self.policy(torch.as_tensor(x))
+        probabilities = self.policy(torch.as_tensor(observation))
         return probabilities.argmax().item()
 
     def save(self, path):
