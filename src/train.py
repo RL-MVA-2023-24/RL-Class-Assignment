@@ -5,14 +5,13 @@ from env_hiv import HIVPatient
 import numpy as np
 from tqdm import tqdm
 import torch
-import matplotlib.pyplot as plt
 import random
 import os
 env = TimeLimit(
     env=HIVPatient(domain_randomization=False), max_episode_steps=200
 )  # The time wrapper limits the number of steps in an episode at 200.
 # Now is the floor is yours to implement the agent and train it.
-path_DQN = os.path.join(os.getcwd(), "DQN_parameters4_ema.pt")
+path_DQN_load = os.path.join(os.getcwd(), "DQN_parameters_replace.pt")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -166,10 +165,10 @@ class ProjectAgent:
 
             if done or trunc:
                 episode += 1
-                """if self.best_reward < episode_cum_reward:
+                if self.best_reward < episode_cum_reward:
                     print("Saving best reward")
                     self.best_reward = episode_cum_reward
-                    self.save(path_DQN)"""
+                    self.save(path_DQN_load)
                 print("Episode ", '{:3d}'.format(episode),
                       ", epsilon ", '{:6.2f}'.format(epsilon),
                       ", batch size ", '{:5d}'.format(len(self.memory)),
@@ -228,6 +227,4 @@ if __name__ == "__main__":
     agent = ProjectAgent(config, DQN)
     #agent.load(path_DQN_load)
     scores = agent.train(env, 200)
-    agent.save(path_DQN_load)
-    plt.plot(scores)
-    plt.show()
+    #agent.save(path_DQN_load)
