@@ -23,8 +23,8 @@ import numpy as np
 class policyNetwork(nn.Module):
     def __init__(self):
         super().__init__()
-        self.fc1 = nn.Linear(state_dim, 32, dtype = torch.float64)
-        self.fc3 = nn.Linear(32, n_action, dtype = torch.float64)
+        self.fc1 = nn.Linear(state_dim, 128, dtype = torch.float64)
+        self.fc3 = nn.Linear(128, n_action, dtype = torch.float64)
 
     def forward(self, x):
         if x.dim() == 1:
@@ -47,8 +47,8 @@ class policyNetwork(nn.Module):
 class valueNetwork(nn.Module):
     def __init__(self):
         super().__init__()
-        self.fc1 = nn.Linear(state_dim, 32, dtype = torch.float64)
-        self.fc3 = nn.Linear(32, 1, dtype = torch.float64)
+        self.fc1 = nn.Linear(state_dim, 128, dtype = torch.float64)
+        self.fc3 = nn.Linear(128, 1, dtype = torch.float64)
 
     def forward(self, x):
         if x.dim() == 1:
