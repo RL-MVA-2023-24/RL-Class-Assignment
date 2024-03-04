@@ -240,7 +240,19 @@ class ProjectAgent:
         self.value.eval()
         
 
+class ProjectAgent:
 
+    def __init__(self):
+       pass
+    
+    def act(self, observation, use_random=False):
+        return np.random.randint(4)
+
+    def save(self, path):
+        pass
+
+    def load(self):
+        pass
 # pi = policyNetwork(env).to(device)
 # V  = valueNetwork(env).to(device)
 # # agent = a2c_agent(config, pi, V)
