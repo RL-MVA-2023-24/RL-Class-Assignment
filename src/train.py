@@ -16,6 +16,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.distributions import Categorical
 import random
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
 import numpy as np
@@ -268,6 +269,7 @@ class ProjectAgent:
 
     def __init__(self):
         nb_neurons = 512
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = torch.nn.Sequential(nn.Linear(state_dim, nb_neurons),
                           nn.ReLU(),
                           nn.Linear(nb_neurons, nb_neurons),
