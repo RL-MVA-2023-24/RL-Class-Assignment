@@ -384,7 +384,7 @@ class ProjectAgent:
         torch.save(self.model.state_dict(), path)
 
     def load(self):
-        self.model.load_state_dict(torch.load('src/true_dqn_weights.pth', map_location=torch.device('cpu')))
+        self.model.load_state_dict(torch.load('src/true_dqn_weights_100.pth', map_location=torch.device('cpu')))
         self.target_model = deepcopy(self.model).to(device)
 
 # pi = policyNetwork(env).to(device)
