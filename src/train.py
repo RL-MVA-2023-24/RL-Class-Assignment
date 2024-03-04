@@ -215,10 +215,14 @@ class ProjectAgent:
         return avg_sum_rewards
     
     def act(self, observation, use_random=False):
-        x,_,_ = self.sample_action(observation)
-        # print(f'obsvervation:{observation}')
-        # print(f'act:{x}')
-        return x
+        if use_random:
+            x,_,_ = self.sample_action(observation)
+            # print(f'obsvervation:{observation}')
+            # print(f'act:{x}')
+            return x
+
+        probabilities = self.policy(torch.as_tensor(x))
+        return probabilities.argmax().item()
 
     def save(self, path):
         torch.save(self.policy.state_dict(), 'policy_'+ path)
