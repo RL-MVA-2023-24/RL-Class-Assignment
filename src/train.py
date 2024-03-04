@@ -24,13 +24,13 @@ class policyNetwork(nn.Module):
     def __init__(self):
         super().__init__()
         self.fc1 = nn.Linear(state_dim, 128, dtype = torch.float64)
-        self.fc3 = nn.Linear(128, n_action, dtype = torch.float64)
+        self.fc2 = nn.Linear(128, n_action, dtype = torch.float64)
 
     def forward(self, x):
         if x.dim() == 1:
             x = x.unsqueeze(dim=0)
         x = F.relu(self.fc1(x))
-        action_scores = self.fc3(x)
+        action_scores = self.fc2(x)
         return F.softmax(action_scores,dim=1)
 
     def sample_action(self, x):
@@ -48,13 +48,13 @@ class valueNetwork(nn.Module):
     def __init__(self):
         super().__init__()
         self.fc1 = nn.Linear(state_dim, 128, dtype = torch.float64)
-        self.fc3 = nn.Linear(128, 1, dtype = torch.float64)
+        self.fc2 = nn.Linear(128, 1, dtype = torch.float64)
 
     def forward(self, x):
         if x.dim() == 1:
             x = x.unsqueeze(dim=0)
         x = F.relu(self.fc1(x))
-        return self.fc3(x)
+        return self.fc2(x)
     
 class a2c_agent:
     def __init__(self, config, policy_network, value_network):
